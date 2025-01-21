@@ -98,9 +98,72 @@ fun MainScreen(
             ) {
                 NameAndProfile()
                 Search()
+                Banner()
             }
         }
     )
+}
+
+@Composable
+fun Banner() {
+    ConstraintLayout(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .fillMaxWidth()
+            .height(150.dp)
+            .background(
+                color = Color(0xffffc5ab),
+                shape = RoundedCornerShape(10.dp)
+            )
+    ) {
+        val (image, title, date, buttonLayout) = createRefs()
+        Image(
+            painter = painterResource(id = R.drawable.image_banner),
+            contentDescription = null,
+            modifier = Modifier
+                .constrainAs(image) {
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                }
+        )
+        Text(
+            text = "Free Delivery",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier
+                .constrainAs(title) {
+                    end.linkTo(parent.end, margin = 20.dp)
+                    top.linkTo(image.top)
+                }
+        )
+        Text(
+            text = "Jan 24 - Feb 1",
+            fontSize = 18.sp,
+            color = Color.Black,
+            modifier = Modifier
+                .constrainAs(date) {
+                    end.linkTo(title.end)
+                    top.linkTo(title.bottom)
+                }
+        )
+        Text(
+            text = "Order Now",
+            color = Color.White,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .constrainAs(buttonLayout) {
+                    start.linkTo(image.end)
+                    end.linkTo(date.end)
+                    bottom.linkTo(parent.bottom)
+                }
+                .background(
+                    color = Color(0xffff5e00),
+                    shape = RoundedCornerShape(50.dp)
+                )
+                .padding(8.dp)
+        )
+    }
 }
 
 @Composable
@@ -154,6 +217,8 @@ fun NameAndProfile() {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 }
+                .height(80.dp)
+                .width(80.dp)
                 .clickable {  }
         )
         Text(
