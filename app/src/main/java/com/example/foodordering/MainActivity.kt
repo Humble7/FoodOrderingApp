@@ -242,7 +242,6 @@ fun Banner() {
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .constrainAs(buttonLayout) {
-                    start.linkTo(image.end)
                     end.linkTo(date.end)
                     bottom.linkTo(parent.bottom)
                 }
