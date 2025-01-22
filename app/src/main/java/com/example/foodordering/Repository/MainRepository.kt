@@ -12,7 +12,6 @@ import com.google.firebase.database.ValueEventListener
 class MainRepository {
     private val firebaseDatabase = FirebaseDatabase.getInstance()
 
-    @SuppressLint("RestrictedApi")
     fun loadCategory(): LiveData<MutableList<CategoryModel>> {
 
         val listData = MutableLiveData<MutableList<CategoryModel>>()
