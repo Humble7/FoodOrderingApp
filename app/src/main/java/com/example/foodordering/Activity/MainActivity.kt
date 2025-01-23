@@ -1,15 +1,17 @@
-package com.example.foodordering
+package com.example.foodordering.Activity
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,12 +53,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import com.example.foodordering.Model.CategoryModel
+import com.example.foodordering.Model.FoodModel
+import com.example.foodordering.R
 import com.example.foodordering.ViewModel.MainViewModel
 
 class MainActivity : BaseActivity() {
@@ -71,7 +78,9 @@ class MainActivity : BaseActivity() {
 @Composable
 @Preview
 fun MainScreen(
-
+    onCartClick: () -> Unit = {},
+    onHomeClick: () -> Unit = {},
+    onFoodClick: (FoodModel) -> Unit = {}
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -82,7 +91,7 @@ fun MainScreen(
             FloatingActionButton(
                 onClick = {},
                 contentColor = Color.White,
-                backgroundColor = colorResource(id=R.color.orange)
+                backgroundColor = colorResource(id= R.color.orange)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.shopping_cart),
@@ -104,7 +113,12 @@ fun MainScreen(
             ) {
                 val viewModel = MainViewModel()
                 val categories = remember { mutableListOf<CategoryModel>() }
+                val popular = remember { mutableListOf<FoodModel>() }
+
                 var showCategoryLoading by remember { mutableStateOf(true) }
+                var showPopularLoading by remember { mutableStateOf(true) }
+
+
                 LaunchedEffect(Unit) {
                     viewModel.loadCategory().observeForever {
                         categories.clear()
@@ -113,15 +127,150 @@ fun MainScreen(
                     }
                 }
 
+                LaunchedEffect(Unit) {
+                    viewModel.loadPopular().observeForever {
+                        popular.clear()
+                        popular.addAll(it)
+                        showPopularLoading = false
+                    }
+                }
+
                 NameAndProfile()
                 Search()
                 Banner()
 
                 CategorySection(categories, showCategoryLoading)
-                
+                Spacer(modifier = Modifier.height(16.dp))
+                PopularSection(onFoodClick, popular, showPopularLoading)
+                Spacer(modifier = Modifier.height(16.dp))
+
             }
         }
     )
+}
+
+@Composable
+fun PopularSection(
+    onFoodClick: (FoodModel) -> Unit,
+    popular: MutableList<FoodModel>,
+    showPopularLoading: Boolean
+) {
+    Text(
+        text = "Popular Items",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
+    if (showPopularLoading) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyRow(
+            horizontalArrangement =  Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(popular) { food ->
+                FoodItem(food, onFoodClick)
+            }
+        }
+    }
+}
+
+@Composable
+fun FoodItem(food: FoodModel, onFoodClick: (FoodModel) -> Unit) {
+    ConstraintLayout(
+        modifier = Modifier
+            .wrapContentSize()
+            .border(
+                3.dp, colorResource(id = R.color.grey),
+                shape = RoundedCornerShape(15.dp)
+            )
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(15.dp)
+            )
+            .padding(16.dp)
+    ) {
+        val (title, image, fee, dollar, addButton) = createRefs()
+
+
+        AsyncImage(
+            model = (food.picUrl),
+            contentDescription = null,
+            modifier = Modifier
+                .size(100.dp)
+                .constrainAs(image) {
+                    top.linkTo(parent.top, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        Text(
+            text = food.title,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xff373b54),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .constrainAs(title) {
+                    top.linkTo(image.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .padding(horizontal = 4.dp)
+        )
+
+        Text(
+            text = "%.2f".format(food.price),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xff373b54),
+            modifier = Modifier.constrainAs(fee) {
+                top.linkTo(title.bottom, margin = 4.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        )
+
+        Text(
+            text = "$",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xffff3d00),
+            modifier = Modifier
+                .constrainAs(dollar) {
+                    centerVerticallyTo(fee)
+                    end.linkTo(fee.start, margin = 3.dp)
+                    bottom.linkTo(fee.bottom)
+                }
+        )
+
+        Text(
+            text = "+ Add",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier
+                .background(color = Color(0xffff5e00),
+                    shape = RoundedCornerShape(50.dp)
+                )
+                .padding(horizontal = 10.dp, vertical = 3.dp)
+                .clickable { onFoodClick(food) }
+                .constrainAs(addButton) {
+                    top.linkTo(fee.bottom, margin = 4.dp)
+                    centerHorizontallyTo(image)
+                }
+        )
+    }
 }
 
 @Composable
