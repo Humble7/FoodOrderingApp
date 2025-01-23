@@ -465,15 +465,15 @@ fun NameAndProfile() {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 }
-                .height(80.dp)
-                .width(80.dp)
+                .height(90.dp)
+                .width(90.dp)
                 .clickable {  }
         )
         Text(
             text = "Hi Zion",
             color = colorResource(id = R.color.orange),
-            fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .constrainAs(name) {
@@ -484,7 +484,8 @@ fun NameAndProfile() {
         Text(
             text = "Order & Eat",
             color = Color.Black,
-            fontSize = 20.sp,
+            fontSize = 35.sp,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .constrainAs(order) {
