@@ -1,5 +1,6 @@
 package com.example.foodordering.Activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -69,7 +70,14 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainScreen(
-
+                onHomeClick = {
+                    startActivity(Intent(this, MainActivity::class.java))
+                },
+                onFoodClick = { food ->
+                    val intent = Intent(this, ShowItemActivity::class.java)
+                    intent.putExtra("object", food)
+                    startActivity(intent)
+                }
             )
         }
     }

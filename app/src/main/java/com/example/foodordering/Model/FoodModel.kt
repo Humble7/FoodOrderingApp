@@ -1,5 +1,7 @@
 package com.example.foodordering.Model
 
+import java.io.Serializable
+
 data class FoodModel (
     var title: String = "",
     var picUrl: String = "",
@@ -7,4 +9,4 @@ data class FoodModel (
     var price: Double = 0.0,
     var categoryId: String = "",
     var numberInCart: Int = 0
-)
+):Serializable
