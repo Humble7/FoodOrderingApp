@@ -1,6 +1,8 @@
 package com.example.foodordering.Activity
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -28,13 +30,18 @@ import com.example.foodordering.R
 class IntroActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContent {
+            IntroScreenPreview( onGetStartedClick = {
+                startActivity(Intent(this, MainActivity::class.java))
+            })
+        }
     }
 }
 
 @Composable
 @Preview
-fun IntroScreenPreview() {
-    IntroScreen(onGetStartedClick={})
+fun IntroScreenPreview(onGetStartedClick: () -> Unit) {
+    IntroScreen(onGetStartedClick=onGetStartedClick)
 }
 
 @Composable

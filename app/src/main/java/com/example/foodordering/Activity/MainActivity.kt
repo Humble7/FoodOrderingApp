@@ -70,6 +70,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainScreen(
+                onCartClick = {
+                    startActivity(Intent(this, CartActivity::class.java))
+                },
                 onHomeClick = {
                     startActivity(Intent(this, MainActivity::class.java))
                 },
@@ -97,7 +100,7 @@ fun MainScreen(
             MyBottomBar()
         }, floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = { onCartClick() },
                 contentColor = Color.White,
                 backgroundColor = colorResource(id= R.color.orange)
             ) {
@@ -467,7 +470,7 @@ fun NameAndProfile() {
                 .clickable {  }
         )
         Text(
-            text = "Hi Rechard",
+            text = "Hi Zion",
             color = colorResource(id = R.color.orange),
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,

@@ -53,7 +53,6 @@ class ShowItemActivity : BaseActivity() {
         setContent {
             showDetailScreen(food = item,
                 onAddToCartClick = {
-                    item.numberInCart = 1
                     managmentCart.insertItem(item)
                 }
             )
